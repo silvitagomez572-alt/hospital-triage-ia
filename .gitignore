@@ -1,4 +1,26 @@
-.venv/
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
 .env
+
+# OS / editor
+.DS_Store
+*.swp
+*.swo
+.vscode/
+
+# Data local / locks
+api/data/registros.json
+api/data/*.lock
+api/data/registros_*.json
+
+# Models (opcional: si pesa mucho)
+# api/model/*.pkl
+
+# Logs
+*.log
+
