@@ -24,3 +24,10 @@ api/data/registros_*.json
 # Logs
 *.log
 
+# Terraform
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.backup
+terraform.tfvars
+.terraform/
