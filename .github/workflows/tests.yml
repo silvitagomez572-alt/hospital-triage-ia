@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
@@ -24,5 +24,7 @@ jobs:
           pip install pytest httpx
 
       - name: Run tests
+        env:
+          PYTHONPATH: .
         run: |
-          PYTHONPATH=$(pwd) pytest api/tests -v
+          pytest api/tests -v
