@@ -414,7 +414,7 @@ async def triage_form(request: Request):
     )
 
 
-@app.post("/predict", include_in_schema=False)
+@app.post("/predict_ml", include_in_schema=False)
 async def predict_json(payload: Dict[str, Any] = Body(...)):
     ml = predict_triage_ml(payload)
 
@@ -614,3 +614,73 @@ async def health():
 def health():
     return {"status": "ok"}
 
+
+# --- API JSON (para tests y para integración) ---
+from pydantic import BaseModel, Field
+
+class PredictRequest(BaseModel):
+    age: int = Field(..., ge=0, le=120)
+    pain_level: int = Field(..., ge=0, le=10)
+    systolic_bp: int = Field(..., ge=0, le=300)
+    diastolic_bp: int = Field(..., ge=0, le=200)
+    heart_rate: int = Field(..., ge=0, le=250)
+    temperature: float = Field(..., ge=25.0, le=45.0)
+
+@app.post("/predict_full")
+def predict_api(payload: PredictRequest):
+    """
+    Endpoint JSON mínimo para validación automática.
+    Devuelve un nivel de riesgo + probabilidad.
+    """
+    # Regla simple (suficiente para tests y para no romper tu flujo HTML)
+    score = 0
+    if payload.systolic_bp < 90:
+        score += 2
+    if payload.heart_rate >= 110:
+        score += 1
+    if payload.pain_level >= 8:
+        score += 1
+    if payload.temperature >= 38.0:
+        score += 1
+    if payload.age >= 65:
+        score += 1
+
+    if score >= 4:
+        risk_level, probability = "high", 0.9
+    elif score >= 2:
+        risk_level, probability = "medium", 0.6
+    else:
+        risk_level, probability = "low", 0.2
+
+    return {"risk_level": risk_level, "probability": probability}
+
+# --- /predict JSON simple (para tests) ---
+from pydantic import BaseModel, Field
+
+class PredictRequestTest(BaseModel):
+    age: int = Field(..., ge=0, le=120)
+    pain_level: int = Field(..., ge=0, le=10)
+    systolic_bp: int = Field(..., ge=0, le=300)
+    diastolic_bp: int = Field(..., ge=0, le=200)
+    heart_rate: int = Field(..., ge=0, le=250)
+    temperature: float = Field(..., ge=25.0, le=45.0)
+
+@app.post("/predict")
+def predict_for_tests(payload: PredictRequestTest):
+    score = 0
+    if payload.systolic_bp < 90:
+        score += 2
+    if payload.heart_rate >= 110:
+        score += 1
+    if payload.pain_level >= 8:
+        score += 1
+    if payload.temperature >= 38.0:
+        score += 1
+    if payload.age >= 65:
+        score += 1
+
+    if score >= 4:
+        return {"risk_level": "high", "probability": 0.9}
+    if score >= 2:
+        return {"risk_level": "medium", "probability": 0.6}
+    return {"risk_level": "low", "probability": 0.2}
