@@ -1,7 +1,14 @@
 import warnings
 warnings.filterwarnings("ignore")
 
+
 from fastapi import FastAPI, Request, Body
+from fastapi.middleware.cors import CORSMiddleware
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -46,6 +53,16 @@ MODEL_DIR = BASE_DIR / "model"  # api/model
 # APP
 # ============================================================
 app = FastAPI(title="Hospital Triage API", version="1.0.0")
+
+# CORS (desarrollo)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
@@ -667,6 +684,7 @@ class PredictRequestTest(BaseModel):
 
 @app.post("/predict")
 def predict_for_tests(payload: PredictRequestTest):
+    logger.info(f"Predict request: age={payload.age}, pain={payload.pain_level}")
     score = 0
     if payload.systolic_bp < 90:
         score += 2
