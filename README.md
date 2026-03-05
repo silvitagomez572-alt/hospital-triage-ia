@@ -33,77 +33,96 @@ El sistema también incluye **paneles de visualización para personal médico y 
 
 # Arquitectura del Sistema
 
-La arquitectura sigue un enfoque modular orientado a servicios.
+La arquitectura del sistema está basada en una API REST desarrollada en Python utilizando FastAPI.
 
-### Componentes principales
+El servicio expone endpoints que permiten verificar el estado del sistema y realizar predicciones de riesgo a partir de datos clínicos básicos.
 
-**API de Serving**
-- Framework: **FastAPI**
-- Motor de plantillas: **Jinja2**
-- Exposición de endpoints REST y formularios web
+Componentes principales
 
-**Modelo de Machine Learning**
-- Modelo serializado en formato `.pkl`
-- Cargado al iniciar la API
-- Utilizado para inferencias en endpoints `/predict` y `/predict_full`
+API de Serving
 
-**Persistencia**
-- Registro de triages en archivos **JSON**
-- Control de acceso concurrente mediante file-lock
+Framework: FastAPI
 
-**Interfaz de usuario**
-- Formularios HTML para triage
-- Panel médico
-- Panel directivos con indicadores
+Exposición de endpoints REST
 
-**CI/CD**
-- Pipeline automatizado mediante **GitHub Actions**
-- Ejecución de tests con **pytest** en cada push
+Documentación automática mediante Swagger UI
 
-**Infraestructura**
-- Preparación para despliegue con **Docker**
-- Infraestructura como código con **Terraform**
-- Configuración de **Horizontal Pod Autoscaler para Kubernetes**
+Lógica de inferencia
 
----
+La API recibe información clínica básica de un paciente:
 
-# Estructura del Repositorio
+edad
+
+nivel de dolor
+
+presión arterial
+
+frecuencia cardíaca
+
+temperatura
+
+Con estos datos el sistema calcula un nivel estimado de riesgo y devuelve una respuesta en formato JSON.
+
+Tests automáticos
+
+El proyecto incluye tests desarrollados con pytest, ubicados en:
+api/tests
+
+Estos tests verifican el correcto funcionamiento de los endpoints principales de la API.
+
+CI/CD
+
+El repositorio incluye un pipeline de Integración Continua mediante GitHub Actions.
+
+El workflow ejecuta automáticamente:
+
+instalación de dependencias
+
+ejecución de tests con pytest
+
+Esto permite validar automáticamente el funcionamiento del proyecto en cada cambio realizado en el repositorio.
+
+Infraestructura
+
+El proyecto incluye archivos de infraestructura relacionados con despliegue en entornos cloud:
+
+Terraform para infraestructura como código
+
+Horizontal Pod Autoscaler (HPA) para Kubernetes
+
+Archivo incluido:
+triage-api-hpa.yaml
+Estructura del Repositorio
+
 hospital-triage-ia
 │
 ├── api/
-│ ├── main.py
-│ ├── templates/
-│ ├── static/
-│ └── tests/
+│   ├── main.py
+│   └── tests/
 │
-├── training/
-│ Scripts de entrenamiento y versionado del modelo
-│
-├── infra/terraform/
-│ Infraestructura como código
+├── infra/
+│   └── terraform/
 │
 ├── .github/workflows/
-│ Pipeline de CI/CD con GitHub Actions
+│   └── tests.yml
 │
 ├── requirements.txt
 ├── pytest.ini
 ├── triage-api-hpa.yaml
 └── README.md
----
 
-# Endpoints Principales
-
-### Health Check
+Endpoints Principales
+Health Check
 GET /health
 Permite verificar el estado de la API.
 
----
-
-### Inferencia ML (modo simple)
+Ejemplo de respuesta:
+{
+  "status": "ok"
+}
+Predicción de riesgo
 POST /predict
 Entrada JSON:
-
-```json
 {
   "age": 45,
   "pain_level": 6,
@@ -112,88 +131,33 @@ Entrada JSON:
   "heart_rate": 95,
   "temperature": 38.2
 }
-Respuesta:{
+Respuesta:
+{
   "risk_level": "low",
   "probability": 0.2
 }
-Inferencia completa
-POST /predict_full
-Utilizado para evaluaciones más completas dentro del sistema.
-Formulario de Triage
-GET /triage
-Formulario clínico para registrar datos del paciente.
-
-Registro de Triage
-POST /triage/predict
-
-Procesa el formulario, ejecuta inferencia y genera una ficha de triage.
-
-Panel Médico
-GET /medico
-
-Vista operativa del sistema.
-
-Panel Directivos
-GET /directivos
-
-Panel con indicadores de gestión.
-
 Ejecución del Proyecto
-Ejecutar con Docker
 
-Desde la carpeta api:
-cd api
-docker compose up --build
-Una vez levantado el servicio:
+Instalar dependencias:
+pip install -r requirements.txt
+Ejecutar la API:
+uvicorn api.main:app --reload
+La API estará disponible en:
 
-Formulario de triage
-http://localhost:8001/triage
-Panel médico
-http://localhost:8001/medico
-Panel directivos
-http://localhost:8001/directivos
-Health check
-http://localhost:8001/health
-Documentación Swagger
-http://localhost:8001/docs
-CI/CD
-El proyecto incluye un pipeline de Integración Continua mediante GitHub Actions.
+http://localhost:8000
+Documentación Swagger:
 
-El workflow ejecuta:
+http://localhost:8000/docs
+Tecnologías Utilizadas
 
-Instalación de Python
+Python
 
-Instalación de dependencias
+FastAPI
 
-Ejecución de tests con pytest
+Pytest
 
-Archivo de configuración:
+GitHub Actions
 
-.github/workflows/tests.yml
+Terraform
 
-Esto permite validar automáticamente el funcionamiento de la API en cada cambio realizado en el repositorio.
- Tecnologías Utilizadas
-
-- Python
-- FastAPI
-- Scikit-learn
-- Jinja2
-- Docker
-- GitHub Actions
-- Terraform
-- Kubernetes
-- Pytest
-
----
-
-# Repositorio
-
-Proyecto disponible en:
-
-https://github.com/silvitagomez572-alt/hospital-triage-ia
-
----
-
-# Aviso
-
-Este sistema es un **prototipo académico desarrollado con fines educativos** y **no reemplaza el criterio clínico profesional**.
+Kubernetes
