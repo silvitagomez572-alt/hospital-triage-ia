@@ -1,100 +1,109 @@
 # Hospital Triage IA – Trabajo Final Integrador
+
 ## Infraestructura Tecnológica para Inteligencia Artificial
 
 ## Objetivo
 
 Diseñar e implementar una API de inferencia en Python que permita estimar un nivel de riesgo clínico a partir de datos básicos de pacientes en un contexto de triage hospitalario.
 
-El proyecto forma parte del trabajo final de la materia **Infraestructura Tecnológica para Inteligencia Artificial**.
-
 ---
 
-# Descripción del Proyecto
+## Descripción del Proyecto
 
 El sistema implementa una **API REST desarrollada con FastAPI** que recibe información clínica básica de un paciente y devuelve una estimación de riesgo.
 
-El objetivo es demostrar la construcción de una arquitectura simple para servicios de IA incluyendo:
+Incluye:
 
 - API de inferencia
+- modelo de Machine Learning entrenado
 - tests automáticos
-- pipeline de CI/CD
-- infraestructura como código
+- CI/CD con GitHub Actions
+- infraestructura como código (Terraform)
+- despliegue con Docker y Kubernetes
 
 ---
 
-# Arquitectura del Sistema
+## Modelo de Machine Learning
 
-La arquitectura del sistema está compuesta por los siguientes elementos:
+Se entrenó un modelo de clasificación (`RandomForestClassifier`) con datos sintéticos.
+
+El modelo se serializa en:
+
+api/model/triage_model_v1.pkl
+
+y es utilizado por el endpoint:
+
+POST /predict
+
+---
+
+## Arquitectura del Sistema
 
 ### API de Serving
-
-- Framework: **FastAPI**
-- Endpoints REST para inferencia
-- Documentación automática con **Swagger**
+- FastAPI
+- Endpoints REST
+- Swagger automático
 
 ### Tests
-
-Se incluyen **tests automáticos con pytest** para validar el funcionamiento de la API.
-
 Ubicación:
 api/tests
 
 ### CI/CD
-
-Se implementó un pipeline de **Integración Continua con GitHub Actions** que ejecuta automáticamente los tests en cada push o pull request.
-
-Archivo de configuración:
-github/workflows/tests.yml
+.github/workflows/tests.yml
 
 ### Infraestructura
+- Terraform
+- Kubernetes Deployment
+- Horizontal Pod Autoscaler
 
-El proyecto incluye archivos de infraestructura relacionados con despliegue en entornos cloud:
-
-- **Terraform**
-- **Horizontal Pod Autoscaler para Kubernetes**
-
-Archivo incluido:
-triage-api-hpa.yaml
+k8s/triage-api-deployment.yaml  
+k8s/triage-api-hpa.yaml
 
 ---
 
-# Estructura del Repositorio
-hospital-triage-ia
-│
+## Estructura del Repositorio
+
+hospital-triage-ia/
 ├── api/
-│ ├── main.py
-│ └── tests/
-│
+│   ├── main.py
+│   ├── requirements.txt
+│   ├── model/
+│   │   └── triage_model_v1.pkl
+│   ├── templates/
+│   ├── static/
+│   └── tests/
 ├── infra/
-│ └── terraform/
-│
+│   └── terraform/
+├── k8s/
+│   ├── triage-api-deployment.yaml
+│   └── triage-api-hpa.yaml
+├── training/
 ├── .github/workflows/
-│ └── tests.yml
-│
+├── Dockerfile
+├── .dockerignore
 ├── requirements.txt
 ├── pytest.ini
-├── triage-api-hpa.yaml
 └── README.md
 
 ---
 
-# Endpoints Principales
+## Endpoints
 
 ### Health Check
 GET /health
 
-Permite verificar el estado de la API.
+Respuesta:
 
-Ejemplo de respuesta:
-
-```json
 {
-  "status": "ok"
+  "status": "ok",
+  "time": "2026-04-19T12:00:00"
 }
-Predicción de riesgo
+
+### Predicción
 POST /predict
 
-Entrada JSON:
+Entrada:
+
 {
   "age": 45,
   "pain_level": 6,
@@ -103,46 +112,46 @@ Entrada JSON:
   "heart_rate": 95,
   "temperature": 38.2
 }
+
 Respuesta:
+
 {
   "risk_level": "low",
-  "probability": 0.2
+  "probability": 0.2,
+  "model_path": "api/model/triage_model_v1.pkl"
 }
-Ejecución del Proyecto
 
-Instalar dependencias:
-pip install -r requirements.txt
-Ejecutar la API:
+---
 
+## Ejecución
+
+pip install -r requirements.txt  
 uvicorn api.main:app --reload
 
-La API estará disponible en:
-
-http://localhost:8000
-
-Documentación Swagger:
-
+Swagger:
 http://localhost:8000/docs
-Tecnologías Utilizadas
 
-Python
+---
 
-FastAPI
+## Tecnologías
 
-Pytest
+- Python
+- FastAPI
+- Scikit-learn
+- Pytest
+- GitHub Actions
+- Terraform
+- Kubernetes
+- Docker
 
-GitHub Actions
+---
 
-Terraform
-
-Kubernetes
-
-Repositorio
-
-Proyecto disponible en:
+## Repositorio
 
 https://github.com/silvitagomez572-alt/hospital-triage-ia
 
-Aviso
+---
 
-Este sistema es un prototipo académico desarrollado con fines educativos y no reemplaza el criterio clínico profesional.
+## Aviso
+
+Sistema académico. No reemplaza criterio clínico profesional.
