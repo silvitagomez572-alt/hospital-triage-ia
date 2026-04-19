@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field
 
-
 class TriageInput(BaseModel):
-    age: int = Field(..., ge=0, le=120, description="Edad del paciente en años")
+    age: int = Field(
+        ..., ge=0, le=120, description="Edad del paciente en años"
+    )
     pain_level: int = Field(
         ..., ge=0, le=10, description="Nivel de dolor (0 sin dolor, 10 máximo dolor)"
     )
@@ -21,7 +22,8 @@ class TriageInput(BaseModel):
 
 
 class TriageOutput(BaseModel):
-    # 👀 IMPORTANTE: este nombre debe coincidir con lo que devolvemos en main.py
-    risk_level: str
-    probability: float
+    # Estos nombres deben coincidir EXACTO con lo que devuelves en main.py
+    risk_level: str   # "Alto", "Medio", "Bajo"
+    score: int        # Puntaje calculado
+    probability: float  # Probabilidad estimada (0 a 1)
 

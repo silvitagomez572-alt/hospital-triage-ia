@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Tablero Triage</title>
+  <style>
+    body{font-family:Arial; margin:16px;}
+    h2{margin:0 0 12px 0;}
+    .row{border:1px solid #222; padding:10px; border-radius:8px; margin-bottom:10px;}
+    .badge{display:inline-block; padding:4px 10px; border-radius:999px; border:1px solid #222; font-size:12px;}
+    .vencido{background:#ffe3e3;}
+    .entiempo{background:#e7f5ff;}
+    .muted{opacity:.8; font-size:12px;}
+    .top{display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <h2>Tablero de Triage (Tiempo de espera – Manchester)</h2>
+    <div class="muted">Actualizá con F5 para ver vencidos en tiempo real</div>
+  </div>
+
+  {% for r in registros %}
+    <div class="row {% if r.estado_manchester=='VENCIDO' %}vencido{% else %}entiempo{% endif %}">
+      <div>
+        <span class="badge"><strong>{{ r.manchester_color_final }}</strong> · {{ r.manchester_minutes }} min</span>
+        <span class="badge">Estado: <strong>{{ r.estado_manchester }}</strong></span>
+      </div>
+
+      <div style="margin-top:6px;">
+        <strong>{{ r.apellido_nombre or r.nombre or "SIN NOMBRE" }}</strong>
+        <div class="muted">Motivo: {{ r.motivo or "-" }}</div>
+      </div>
+
+      <div style="margin-top:6px;" class="muted">
+        Inicio: {{ r.hora_inicio }} · Límite: {{ r.hora_limite }} · Transcurrido: {{ r.tiempo_transcurrido_min }} min
+      </div>
+    </div>
+  {% endfor %}
+</body>
+</html>

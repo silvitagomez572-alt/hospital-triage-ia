@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Panel Directivos</title>
+  <style>
+    body{font-family:Arial; margin:16px;}
+    .card{border:1px solid #222; padding:12px; border-radius:10px; margin-bottom:12px;}
+    .grid{display:grid; grid-template-columns: repeat(3,1fr); gap:10px;}
+    .kpi{border:1px solid #222; padding:10px; border-radius:10px;}
+    .big{font-size:26px; font-weight:bold;}
+  </style>
+</head>
+<body>
+  <h2>Panel Directivos – Métricas Manchester</h2>
+
+  <div class="grid">
+    <div class="kpi"><div>Total triages</div><div class="big">{{ total }}</div></div>
+    <div class="kpi"><div>Vencidos</div><div class="big">{{ vencidos }}</div></div>
+    <div class="kpi"><div>% Vencidos</div>
+      <div class="big">
+        {% if total>0 %}{{ (vencidos*100/total)|round(1) }}%{% else %}0%{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Pacientes por color</h3>
+    <ul>
+      {% for c,v in por_color.items() %}
+        <li><strong>{{ c }}</strong>: {{ v }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+</body>
+</html>
+<div class="cards">
+  <div class="card"><div>Total triages</div><strong>{{ total }}</strong></div>
+  <div class="card"><div>Vencidos</div><strong>{{ vencidos }}</strong></div>
+  <div class="card"><div>% Vencidos</div><strong>{{ pct_vencidos }}%</strong></div>
+
+  <div class="card"><div>Siniestros viales</div><strong>{{ siniestros }}</strong></div>
+  <div class="card"><div>Internaciones</div><strong>{{ internaciones }}</strong></div>
+</div>
+<h2>Resolución</h2>
+<label for="resolucion">Resolución</label>
+<select name="resolucion" id="resolucion">
+  <option value="">(sin dato)</option>
+  <option value="Alta">Alta</option>
+  <option value="Observación">Observación</option>
+  <option value="Internación">Internación</option>
+  <option value="Óbito">Óbito</option>
+</select>

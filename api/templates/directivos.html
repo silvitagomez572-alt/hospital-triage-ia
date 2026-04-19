@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel Directivos</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 14px; min-width: 220px; }
+    h1 { margin: 0 0 12px 0; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; font-size: 14px; }
+    th { background: #f5f5f5; text-align: left; }
+    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; background: #eee; }
+    .muted { color: #666; font-size: 13px; }
+    a { color: #0b5ed7; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <h1>Panel Directivos</h1>
+  <div class="muted">Resumen operativo de triage (Manchester + tiempos)</div>
+
+  <div class="row" style="margin-top:14px;">
+    <div class="card">
+      <div class="muted">Total triages</div>
+      <div style="font-size:28px;"><b>{{ total }}</b></div>
+    </div>
+    <div class="card">
+      <div class="muted">Vencidos</div>
+      <div style="font-size:28px;"><b>{{ vencidos }}</b></div>
+    </div>
+    <div class="card">
+      <div class="muted">Promedio tiempo (min)</div>
+      <div style="font-size:28px;"><b>{{ promedio_tiempo }}</b></div>
+    </div>
+    <div class="card">
+      <div class="muted">Siniestros cargados</div>
+      <div style="font-size:28px;"><b>{{ siniestros_total }}</b></div>
+    </div>
+    <div class="card">
+      <div class="muted">Internaciones cargadas</div>
+      <div style="font-size:28px;"><b>{{ internaciones_total }}</b></div>
+    </div>
+  </div>
+
+  <h2 style="margin-top:22px;">Triage por color</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Color</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c, n in por_color.items() %}
+      <tr>
+        <td><span class="pill">{{ c }}</span></td>
+        <td>{{ n }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2 style="margin-top:22px;">Top 5 triages más vencidos</h2>
+  {% if top_vencidos and top_vencidos|length > 0 %}
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Color</th>
+        <th>Inicio</th>
+        <th>Límite</th>
+        <th>Min transcurridos</th>
+        <th>Ver</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in top_vencidos %}
+      <tr>
+        <td>{{ r.get("id","") }}</td>
+        <td>{{ r.get("manchester_color_final","") }}</td>
+        <td>{{ r.get("hora_inicio","") }}</td>
+        <td>{{ r.get("hora_limite","") }}</td>
+        <td>{{ r.get("tiempo_transcurrido_min","") }}</td>
+        <td><a href="/triage/ver/{{ r.get('id','') }}">Abrir</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="muted">No hay triages vencidos aún.</div>
+  {% endif %}
+
+  <h2 style="margin-top:22px;">Distribución por tipo de accidente</h2>
+  {% if por_tipo_accidente and por_tipo_accidente|length > 0 %}
+  <table>
+    <thead><tr><th>Tipo</th><th>Cantidad</th></tr></thead>
+    <tbody>
+      {% for k, v in por_tipo_accidente.items() %}
+      <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="muted">Sin datos cargados.</div>
+  {% endif %}
+
+  <h2 style="margin-top:22px;">Distribución por lugar de internación</h2>
+  {% if por_lugar_internacion and por_lugar_internacion|length > 0 %}
+  <table>
+    <thead><tr><th>Lugar</th><th>Cantidad</th></tr></thead>
+    <tbody>
+      {% for k, v in por_lugar_internacion.items() %}
+      <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <div class="muted">Sin datos cargados.</div>
+  {% endif %}
+
+  <div style="margin-top:22px;">
+    <a href="/triage">Ir a Triage</a> ·
+    <a href="/registros">Ver Registros</a> ·
+    <a href="/medico">Panel Médico</a>
+  </div>
+
+</body>
+</html>

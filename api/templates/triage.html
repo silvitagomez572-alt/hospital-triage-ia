@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario de Triage</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Formulario de Triage</h1>
+  <p>Ingreso de datos para evaluación rápida del paciente</p>
+
+  <form method="post" action="/triage/predict">
+
+    <label>Edad</label>
+    <input type="number" name="edad" required>
+
+    <label>Nivel de dolor (1 a 10)</label>
+    <input type="number" name="pain_level" min="1" max="10" required>
+
+    <label>Presión sistólica (mmHg)</label>
+    <input type="number" name="systolic_bp" required>
+
+    <label>Presión diastólica (mmHg)</label>
+    <input type="number" name="diastolic_bp" required>
+
+    <label>Frecuencia cardíaca (lpm)</label>
+    <input type="number" name="heart_rate" required>
+
+    <button type="submit">Calcular riesgo</button>
+  </form>
+
+  <br>
+  <a href="/login"><button class="btn-secondary">Volver</button></a>
+</div>
+
+</body>
+</html>

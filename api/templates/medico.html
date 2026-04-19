@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Médico</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div><strong>Panel Médico</strong></div>
+  <div class="topbar-links">
+    <a class="btn btn-muted" href="/registros">Registros</a>
+    <a class="btn btn-muted" href="/triage">Nuevo triage</a>
+    <a class="btn btn-muted" href="/directivos">Directivos</a>
+  </div>
+</div>
+
+<div class="container">
+  <h1>Cola priorizada (Manchester)</h1>
+  <p class="muted">Orden: prioridad (1 = más urgente) y luego hora de inicio</p>
+
+  {% if registros and registros|length > 0 %}
+  <table>
+    <thead>
+      <tr>
+        <th>Prioridad</th>
+        <th>Color</th>
+        <th>Paciente</th>
+        <th>Transcurrido</th>
+        <th>Máx</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in registros %}
+      {% set datos = r.get("datos", {}) %}
+      <tr>
+        <td>{{ r.get("prioridad_num","-") }}</td>
+
+        <td>
+          <strong>{{ r.get("manchester_color_final","S/D") }}</strong>
+        </td>
+
+        <td>
+          {{ datos.get("nombre","S/D") }}
+          {% if datos.get("dni") %}
+            ({{ datos.get("dni") }})
+          {% endif %}
+        </td>
+
+        <td>
+          {% if r.get("tiempo_transcurrido_min") is not none %}
+            {{ r.get("tiempo_transcurrido_min") }} min
+          {% else %}
+            S/D
+          {% endif %}
+        </td>
+
+        <td>{{ r.get("manchester_minutes","S/D") }} min</td>
+
+        <td>
+          {% set est = r.get("estado_manchester","S/D") %}
+          {% if est == "VENCIDO" %}
+            <strong style="color:#b00020;">VENCIDO</strong>
+          {% else %}
+            {{ est }}
+          {% endif %}
+        </td>
+
+        <td style="white-space:nowrap;">
+          <!-- ✅ ABRIR FICHA -->
+          <a class="btn btn-muted" href="/triage/ver/{{ r.get('id') }}">Abrir</a>
+
+          <!-- ✅ CERRAR -->
+          {% if not r.get("cerrado") %}
+            <form method="POST" action="/cerrar/{{ r.get('id') }}" style="display:inline;">
+              <button type="submit" class="btn">Cerrar</button>
+            </form>
+          {% else %}
+            <span class="muted">Cerrado</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p>No hay pacientes en cola.</p>
+  {% endif %}
+</div>
+
+</body>
+</html>
+

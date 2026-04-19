@@ -25,9 +25,13 @@ api/data/registros_*.json
 *.log
 
 # Terraform
-terraform.tfstate
-terraform.tfstate.backup
-*.tfstate
-*.tfstate.backup
-terraform.tfvars
 .terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+
+# Terraform (ruta específica del proyecto)
+infra/terraform/terraform.tfstate
+infra/terraform/terraform.tfstate.backup
+infra/terraform/terraform.tfvars
+infra/terraform/*.tfstate*

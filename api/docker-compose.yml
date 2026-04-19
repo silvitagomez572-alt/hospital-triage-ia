@@ -1,0 +1,12 @@
+services:
+  triage:
+    build: .
+    container_name: hospital-triage
+    ports:
+      - "8001:8001"
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+    volumes:
+      - ./data:/app/data
+      - ./model:/app/model
+

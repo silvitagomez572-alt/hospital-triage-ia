@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resultado de Triage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/styles.css">
+
+  <style>
+    @media print { .no-print { display: none; } }
+    .box{
+      border: 1px solid #ccc;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      background: #fafafa;
+    }
+    .label{ font-weight: bold; }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <h1>Resultado de Triage</h1>
+
+  <!-- ===============================
+       DATOS GENERALES
+  ================================ -->
+  <div class="box">
+    <p><span class="label">Fecha:</span> {{ registro.fecha }}</p>
+    <p><span class="label">ID:</span> {{ registro.id }}</p>
+  </div>
+
+  <!-- ===============================
+       PACIENTE
+  ================================ -->
+  <div class="box">
+    <h2>Paciente</h2>
+    <p><span class="label">Nombre:</span> {{ registro.datos.get("nombre","S/D") }}</p>
+    <p><span class="label">DNI:</span> {{ registro.datos.get("dni","S/D") }}</p>
+    <p><span class="label">Motivo:</span> {{ registro.datos.get("motivo","S/D") }}</p>
+  </div>
+
+  <!-- ===============================
+       SIGNOS VITALES (DEMO)
+  ================================ -->
+  <div class="box">
+    <h2>Signos Vitales</h2>
+    <p>Temperatura: {{ registro.datos.get("temperatura","S/D") }}</p>
+    <p>FR: {{ registro.datos.get("frecuencia_respiratoria","S/D") }}</p>
+    <p>SpO₂: {{ registro.datos.get("spo2","S/D") }}</p>
+    <p>FC: {{ registro.datos.get("fc","S/D") }}</p>
+    <p>PAS: {{ registro.datos.get("pas","S/D") }}</p>
+    <p>Dolor: {{ registro.datos.get("dolor","S/D") }}</p>
+  </div>
+
+  <!-- ===============================
+       MANCHESTER
+  ================================ -->
+  <div class="box">
+    <h2>Clasificación Manchester</h2>
+
+    <p><span class="label">Color final:</span> {{ registro.manchester.color_final }}</p>
+    <p><span class="label">Tiempo máximo:</span> {{ registro.manchester.minutos_max }} minutos</p>
+
+    {% if registro.manchester.color_elegido %}
+      <p><span class="label">Color elegido por profesional:</span> {{ registro.manchester.color_elegido }}</p>
+    {% else %}
+      <p><span class="label">Color sugerido (demo):</span> {{ registro.manchester.color_sugerido_demo }}</p>
+    {% endif %}
+  </div>
+
+  <!-- ===============================
+       DEMO IA (UNIVERSIDAD)
+  ================================ -->
+  <div class="box">
+    <h2>Evaluación demo</h2>
+    <p><span class="label">Score:</span> {{ registro.demo.score }}</p>
+    <p><span class="label">Probabilidad estimada:</span> {{ registro.demo.probabilidad }} %</p>
+    <p class="muted">Demostración académica. No reemplaza criterio clínico.</p>
+  </div>
+
+  <!-- ===============================
+       FIRMA DIGITAL
+  ================================ -->
+  <div class="box">
+    <h2>Firma digital</h2>
+    <p><span class="label">Usuario:</span> {{ registro.firma_digital.usuario }}</p>
+    <p><span class="label">Rol:</span> {{ registro.firma_digital.rol }}</p>
+    <p><span class="label">Fecha y hora:</span> {{ registro.firma_digital.fecha_hora }}</p>
+    <p class="muted">{{ registro.firma_digital.leyenda }}</p>
+  </div>
+
+  <!-- ===============================
+       BOTONES
+  ================================ -->
+  <div class="no-print" style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn" onclick="window.print()">🖨️ Imprimir ficha</button>
+    <a href="/triage" class="btn btn-muted">Nuevo triage</a>
+    <a href="/medico" class="btn btn-muted">Panel médico</a>
+    <a href="/directivos" class="btn btn-muted">Panel directivos</a>
+    <a href="/registros" class="btn btn-muted">Registros</a>
+  </div>
+
+</div>
+</body>
+</html>
+

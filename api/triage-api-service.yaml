@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: triage-api
+  name: hospital-triage-api-service
+  labels:
+    app: hospital-triage-api
 spec:
   type: LoadBalancer
   selector:
-    app: triage-api
+    app: hospital-triage-api
   ports:
     - name: http
-      port: 80          # puerto público del LB
-      targetPort: 8000  # puerto donde escucha FastAPI dentro del pod
-      nodePort: 31242   # NodePort FIJO (ya permitido en el firewall)
+      protocol: TCP
+      port: 80        # Puerto público del LoadBalancer
+      targetPort: 80  # Puerto donde escucha FastAPI dentro del contenedor

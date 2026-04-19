@@ -1,26 +1,26 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 
-# Evitar buffering y problemas de encoding
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Crear usuario no root
+RUN useradd -m appuser
 
 WORKDIR /app
 
-# Instalar dependencias del sistema mínimas
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
- && rm -rf /var/lib/apt/lists/*
-
-# Copiar requirements
+# Copiar requirements primero (mejor cache)
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el código
+# Copiar el resto del código
 COPY . .
 
-# Exponer puerto 80 dentro del contenedor
-EXPOSE 80
+# Usar usuario no root
+USER appuser
 
-# Comando de inicio
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+# Puerto correcto (8000)
+EXPOSE 8000
+
+# Healthcheck
+HEALTHCHECK CMD curl --fail http://localhost:8000/health || exit 1
+
+# Ejecutar app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
