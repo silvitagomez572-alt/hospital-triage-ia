@@ -7,6 +7,8 @@ __pycache__/
 *.pyd
 .venv/
 venv/
+api/.venv/
+api/venv/
 .env
 
 # =========================
@@ -21,6 +23,12 @@ venv/
 # Logs
 # =========================
 *.log
+
+# =========================
+# Pytest / cache
+# =========================
+.pytest_cache/
+api/.pytest_cache/
 
 # =========================
 # Data local / locks
@@ -51,7 +59,6 @@ infra/terraform/*.tfstate*
 # =========================
 # Docker / build
 # =========================
-Dockerfile
 .dockerignore
 
 # =========================
