@@ -1,4 +1,6 @@
+# =========================
 # Python
+# =========================
 __pycache__/
 *.pyc
 *.pyo
@@ -7,31 +9,72 @@ __pycache__/
 venv/
 .env
 
-# OS / editor
+# =========================
+# OS / Editor
+# =========================
 .DS_Store
 *.swp
 *.swo
 .vscode/
 
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
 # Data local / locks
+# =========================
 api/data/registros.json
 api/data/*.lock
 api/data/registros_*.json
 
-# Models (opcional: si pesa mucho)
+# =========================
+# Models (opcional si pesan mucho)
+# =========================
 # api/model/*.pkl
 
-# Logs
-*.log
-
+# =========================
 # Terraform
+# =========================
 .terraform/
 *.tfstate
 *.tfstate.*
 terraform.tfvars
 
-# Terraform (ruta específica del proyecto)
+# Ruta específica del proyecto
 infra/terraform/terraform.tfstate
 infra/terraform/terraform.tfstate.backup
 infra/terraform/terraform.tfvars
 infra/terraform/*.tfstate*
+
+# =========================
+# Docker / build
+# =========================
+Dockerfile
+.dockerignore
+
+# =========================
+# Binarios pesados / tools
+# =========================
+minikube-linux-amd64
+
+# =========================
+# Archivos basura / backup
+# =========================
+*.save
+*.backup
+*.BACKUP
+
+# =========================
+# Carpetas innecesarias
+# =========================
+api/templates/_backup/
+
+# =========================
+# Archivos raros del repo
+# =========================
+api/main
+api/s
+api/py
+api/Dockerfilexs
