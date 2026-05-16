@@ -721,3 +721,32 @@ def predict_for_tests(payload: PredictRequest):
     except Exception as e:
         logger.exception("Predict failed: %s", e)
         raise HTTPException(status_code=500, detail="Prediction failed")
+
+# ============================================================
+# HCD — Historia Clínica Digital
+# ============================================================
+HCD_JSON_PATH = BASE_DIR / "hcd" / "data" / "json_maestro_hc_salud_mental.json"
+
+def load_hcd() -> dict:
+    with open(HCD_JSON_PATH, encoding="utf-8") as f:
+        return json.load(f)
+
+@app.get("/hcd/summary")
+def hcd_summary():
+    return load_hcd()
+
+@app.get("/hcd/interconsultas")
+def hcd_interconsultas():
+    return load_hcd()["interconsultas_detectadas"]
+
+@app.get("/hcd/metricas")
+def hcd_metricas():
+    data = load_hcd()
+    return {
+        "modelo_nlp": data["modelo_nlp"],
+        "carga_asistencial": data["carga_asistencial"],
+        "intervenciones_por_area": data["intervenciones_por_area"],
+        "internacion": data["internacion"],
+        "variables_clinicas_detectadas": data["variables_clinicas_detectadas"],
+        "estrategia_externacion": data["estrategia_externacion"]
+    }
